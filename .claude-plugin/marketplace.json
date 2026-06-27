@@ -1,0 +1,18 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "offspring-claude-skills",
+  "owner": {
+    "name": "Offspring"
+  },
+  "plugins": [
+    {
+      "name": "offspring-claude-skills",
+      "source": "./",
+      "description": "Personal skills, commands, and workflows for Claude Code",
+      "version": "0.0.1",
+      "author": {
+        "name": "Offspring"
+      }
+    }
+  ]
+}

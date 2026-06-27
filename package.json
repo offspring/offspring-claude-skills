@@ -1,0 +1,27 @@
+{
+  "name": "offspring-claude-skills",
+  "version": "0.1.0",
+  "description": "Personal skills, commands, and workflows for Claude Code",
+  "author": {
+    "name": "Andy Trzeciak"
+  },
+  "private": true,
+  "keywords": [
+    "claude-code",
+    "skills",
+    "commands",
+    "workflows",
+    "code-review",
+    "git"
+  ],
+  "files": [
+    ".claude-plugin/",
+    "agents/",
+    "commands/",
+    "hooks/",
+    "output-styles/",
+    "scripts/",
+    "skills/",
+    "CLAUDE.md"
+  ]
+}
