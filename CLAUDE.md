@@ -36,7 +36,7 @@ Personal Claude Code plugin with skills, commands, and workflows.
 
 ## GitHub access
 
-- This repo is hosted on github.com (`origin` = `offspring/offspring-claude-skills`). Use the default `gh` host — no `--hostname` flag needed.
+- This repo is **public** on github.com (`origin` = `offspring/offspring-claude-skills`) and must stay public so the plugin can be installed from its marketplace. Use the default `gh` host — no `--hostname` flag needed.
 - **Restrict writes (pushes, PRs, comments) to the `github.com/offspring` org.** Targeting another org is allowed only when working on or contributing to third-party packages.
 
 ## Adding hooks

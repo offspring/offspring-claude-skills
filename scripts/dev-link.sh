@@ -10,7 +10,7 @@ readonly PLUGIN_NAME="offspring-claude-skills"
 readonly MARKETPLACE="offspring-claude-plugins"
 PLUGIN_DIR="$(cd "$(dirname "$0")/.." && pwd)"
 readonly PLUGIN_DIR
-VERSION="$(jq -r .version "${PLUGIN_DIR}/package.json")"
+VERSION="$(jq -r .version "${PLUGIN_DIR}/.claude-plugin/plugin.json")"
 readonly VERSION
 readonly CACHE_BASE="${HOME}/.claude/plugins/cache/${MARKETPLACE}/${PLUGIN_NAME}"
 readonly CACHE_TARGET="${CACHE_BASE}/${VERSION}"
