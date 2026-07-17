@@ -9,7 +9,7 @@ data = json.load(sys.stdin)
 print(data.get('tool_input', {}).get('command', ''))
 " 2>/dev/null || echo "")"
 
-if printf '%s' "$command" | grep -qi 'co-authored-by'; then
-  echo "BLOCKED: Co-authored-by trailers are forbidden. Remove the Co-authored-by line and retry." >&2
+if printf '%s' "$command" | grep -qiE 'co-authored-by|generated with[^"]*claude|noreply@anthropic\.com'; then
+  echo "BLOCKED: AI attribution is forbidden (Co-authored-by, Generated with Claude Code, noreply@anthropic.com). Remove it and retry." >&2
   exit 2
 fi
