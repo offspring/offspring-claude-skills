@@ -4,3 +4,6 @@ node_modules/
 *.swo
 *~
 *.code-workspace
+
+# Local-only vendored docs
+/docs/superpowers/
