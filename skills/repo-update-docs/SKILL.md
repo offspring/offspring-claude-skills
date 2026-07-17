@@ -1,7 +1,7 @@
 ---
 name: repo-update-docs
-description: Use when documentation needs updating after code changes. Routes each change to the correct doc file (ARCHITECTURE.md, DEVELOPER_GUIDE.md, README.md, or CLAUDE.md). Runs repo-verify-docs when done.
-allowed-tools: ["Bash(git *)", "Read", "Edit"]
+description: Use when documentation (ARCHITECTURE.md, DEVELOPER_GUIDE.md, README.md, CLAUDE.md) needs updating after code changes such as new endpoints, config fields, build targets, or renamed concepts
+allowed-tools: ["Bash(git *)", "Read", "Edit", "Skill"]
 ---
 
 # Update Docs

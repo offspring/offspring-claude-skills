@@ -1,6 +1,6 @@
 ---
 name: repo-verify-docs
-description: Use when auditing documentation accuracy against the codebase. Checks file references, function names, endpoints, config keys, build commands, diagrams, and cross-doc links. Reports only — does not fix.
+description: Use when checking whether documentation (ARCHITECTURE.md, DEVELOPER_GUIDE.md, README.md, CLAUDE.md) still matches the codebase — after refactors, renames, or endpoint changes, or before a doc-touching PR. Reports only — does not fix.
 allowed-tools: ["Bash(grep *)", "Bash(find *)", "Read"]
 ---
 
@@ -25,7 +25,7 @@ For each of `ARCHITECTURE.md`, `DEVELOPER_GUIDE.md`, `README.md`, and `CLAUDE.md
 | Function & type names | Every named symbol exists in the codebase (grep to confirm) |
 | Endpoints | HTTP method, path, status codes, and request/response fields match the handler |
 | Config keys | Every env var name and default value matches the actual config |
-| Build commands | Every build/test command in CLAUDE.md actually works |
+| Build commands | Every build/test command in CLAUDE.md references a target or script that exists (Makefile target, package.json script, etc.) — verify statically, do not execute |
 | Mermaid diagrams | Sequence and component diagrams reflect the actual flow in code |
 | Cross-doc links | Every `[text](doc.md#anchor)` resolves to a real heading in the target doc |
 | Stale terminology | No renamed concepts, packages, or endpoints still using the old name |

@@ -1,7 +1,7 @@
 ---
 name: review-changes
-description: Use when reviewing code changes — checks for bugs, style, test coverage, breaking changes, and documentation impact
-allowed-tools: ["Bash(git *)", "Bash(gh *)", "Read"]
+description: Use when the user wants code changes reviewed — the current branch's changes against its base, or a GitHub PR (pass the PR number or URL)
+allowed-tools: ["Bash(git *)", "Bash(gh *)", "Read", "Skill"]
 ---
 
 # PR Review
@@ -33,9 +33,13 @@ Skip the review if the PR is closed, automated (e.g. a dependency bump), or alre
 ### Step 1: Understand the change
 
 ```bash
-git log --oneline main..HEAD 2>/dev/null || git log --oneline -5
-git diff --stat main..HEAD 2>/dev/null || git diff --stat HEAD~1..HEAD
+# for a PR, prefer: gh pr view $ARGUMENTS --json baseRefName -q .baseRefName
+base=$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null || echo main)
+git log --oneline "$base..HEAD" 2>/dev/null || git log --oneline -5
+git diff --stat "$base...HEAD" 2>/dev/null || git diff --stat HEAD~1..HEAD
 ```
+
+If the base can't be resolved, the `HEAD~1..HEAD` fallback covers only the last commit — say so in the report.
 
 Read the commit messages to understand intent. If a PR number is provided:
 
@@ -47,7 +51,8 @@ gh pr diff $ARGUMENTS
 ### Step 2: Review the diff
 
 ```bash
-git diff main..HEAD 2>/dev/null || git diff HEAD~1..HEAD
+base=$(git symbolic-ref --short refs/remotes/origin/HEAD 2>/dev/null || echo main)
+git diff "$base...HEAD" 2>/dev/null || git diff HEAD~1..HEAD
 ```
 
 Read the root CLAUDE.md and any CLAUDE.md files in directories the change touches. CLAUDE.md is guidance for writing code — not every instruction applies at review time, but flag clear violations.
@@ -62,6 +67,7 @@ For each changed file, evaluate:
 | Config accuracy | Symlink targets exist, paths are correct |
 | Compatibility | macOS-specific assumptions, Homebrew path assumptions |
 | Concurrency | Shared mutable state, missing synchronization |
+| Test coverage | New or changed behavior with no test updates; tests deleted or weakened |
 | Style | Naming, dead code, consistency with existing patterns |
 | Conventions | Violations of root or per-directory CLAUDE.md guidance |
 
@@ -86,10 +92,10 @@ Common cases:
 
 ### Step 4: Run companion checks
 
-After reviewing the diff, invoke these skills on the changed files:
+After reviewing the diff:
 
-- **repo-verify-docs** — if code changes could invalidate documentation references (file paths, function names, endpoints), verify docs accuracy
-- **repo-lint-docs** — if any documentation files (ARCHITECTURE.md, DEVELOPER_GUIDE.md, README.md, CLAUDE.md) were changed, lint them for markdown issues
+- **repo-verify-docs** — if code changes could invalidate documentation references (file paths, function names, endpoints), invoke it to verify docs accuracy
+- If any documentation files (ARCHITECTURE.md, DEVELOPER_GUIDE.md, README.md, CLAUDE.md) were changed, check them against the rules in `repo-lint-docs` and report violations as findings — do not edit files during a review
 
 Skip a check if the changes clearly don't touch its domain.
 

@@ -1,7 +1,7 @@
 ---
 name: repo-lint-docs
 description: Use when fixing markdown lint issues in documentation files (ARCHITECTURE.md, DEVELOPER_GUIDE.md, README.md, CLAUDE.md). Edits files in place.
-allowed-tools: ["Read", "Edit"]
+allowed-tools: ["Read", "Edit", "Skill"]
 ---
 
 # Lint Docs
@@ -25,13 +25,14 @@ Check and fix markdown lint issues across documentation files. Edit files direct
 
 | Rule | What to fix |
 | ---- | ----------- |
+| MD004 | Use consistent list marker style (`-` preferred) |
 | MD009 | Remove trailing spaces from all lines |
 | MD010 | Replace hard tabs with spaces |
 | MD012 | Collapse multiple consecutive blank lines into one |
 | MD023 | Ensure headings start at the beginning of the line (no leading spaces) |
 | MD024 | Remove or rename duplicate headings within the same file |
 | MD025 | Ensure only one H1 (`#`) per file |
-| MD030 | Use consistent list marker style (`-` preferred) |
+| MD030 | Use exactly one space after every list marker |
 | MD031 | Add a blank line before and after every fenced code block |
 | MD032 | Add a blank line before and after every list |
 | MD040 | Add a language identifier to every fenced code block |

@@ -45,7 +45,7 @@ After creating the new docs (Steps 3-6), **present the user with a list of files
 
 Files that are candidates for deletion after consolidation:
 
-- `docs/` or `doc/` directories — **unless** the directory contains a hosted documentation build config (see exception below)
+- `docs/` or `doc/` directories — **unless** the directory contains a hosted documentation build config (see exception below) or holds only diagram files under `docs/diagrams/` (created in Step 4)
 - Standalone docs like `API.md`, `INTEGRATION.md`, `DATA_MODEL.md`, `CONTRIBUTING.md` (merge relevant content first)
 - Do NOT delete non-doc files (e.g. `CHANGELOG.md`, `LICENSE`)
 - Do NOT delete sub-directory READMEs that are auto-generated or consumed by tooling — specifically:
@@ -59,7 +59,7 @@ Files that are candidates for deletion after consolidation:
 - Still consolidate any *standalone* `.md` files from `docs/` that are not part of the site's content tree (e.g., a stray `docs/OLD_NOTES.md`)
 - Add a note in README.md linking to the hosted docs site
 
-The goal: a developer opening this repo sees exactly 4 markdown files at the root (README.md, ARCHITECTURE.md, DEVELOPER_GUIDE.md, CLAUDE.md). No `docs/` subdirectory (unless it powers a hosted documentation site). No scattered `.md` files at root. Every fact lives in exactly one place.
+The goal: a developer opening this repo sees exactly 4 markdown files at the root (README.md, ARCHITECTURE.md, DEVELOPER_GUIDE.md, CLAUDE.md). No `docs/` subdirectory, with two exceptions: it powers a hosted documentation site, or it contains only diagram files in `docs/diagrams/` (see Diagrams in Step 4). No scattered `.md` files at root. Every fact lives in exactly one place.
 
 ## Step 3: Create CLAUDE.md (root level)
 
