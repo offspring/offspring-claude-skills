@@ -10,7 +10,9 @@ Fetch open PRs, show review comments, and address selected ones.
 
 ## Process
 
-### Step 1: Verify auth — HARD GATE
+### Step 1: Verify auth
+
+Verify auth first — **HARD GATE**:
 
 ```bash
 gh auth status 2>&1
