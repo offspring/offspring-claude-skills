@@ -1,6 +1,6 @@
 ---
 name: release-my-changes
-description: Bump plugin version (patch/minor/major), commit, and push to origin
+description: Bump plugin version (patch/minor/major), commit, and push to the repo's remote
 allowed-tools: ["Bash(./scripts/bump-version.sh *)", "Bash(jq *)", "Bash(git *)"]
 ---
 
@@ -29,8 +29,8 @@ git add .claude-plugin/plugin.json .claude-plugin/marketplace.json
 git commit -m "Bump to <new_version>"
 ```
 
-1. Push to origin:
+1. Push to the branch's upstream (the remote is named `offspring` here, not `origin` — `push.default = simple` resolves it):
 
 ```bash
-git push origin HEAD
+git push
 ```
