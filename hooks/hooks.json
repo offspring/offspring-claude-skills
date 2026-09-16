@@ -9,7 +9,7 @@
             "command": "bash \"${CLAUDE_PLUGIN_ROOT}/hooks/no-coauthored-by.sh\""
           }
         ],
-        "description": "Block any command containing Co-authored-by trailers",
+        "description": "Block commands containing AI attribution (Co-authored-by, Generated with Claude, noreply@anthropic.com)",
         "id": "pre:bash:no-coauthored-by"
       }
     ]
