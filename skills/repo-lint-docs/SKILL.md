@@ -1,51 +1,42 @@
 ---
 name: repo-lint-docs
 description: Use when fixing markdown lint issues in documentation files (ARCHITECTURE.md, DEVELOPER_GUIDE.md, README.md, CLAUDE.md). Edits files in place.
-allowed-tools: ["Read", "Edit", "Skill"]
+allowed-tools: ["Bash(npx --yes markdownlint-cli2 *)", "Read", "Edit", "Skill"]
+model: sonnet
+effort: low
 ---
 
 # Lint Docs
 
-Check and fix markdown lint issues across documentation files. Edit files directly — do not just report.
-
-## When to Activate
-
-- Before committing documentation changes
-- After generating or heavily editing a doc
-- When the IDE shows markdown lint warnings in a doc file
-
-## Files to Lint
-
-- `ARCHITECTURE.md`
-- `DEVELOPER_GUIDE.md`
-- `README.md`
-- `CLAUDE.md`
-
-## Rules to Enforce
-
-| Rule | What to fix |
-| ---- | ----------- |
-| MD004 | Use consistent list marker style (`-` preferred) |
-| MD009 | Remove trailing spaces from all lines |
-| MD010 | Replace hard tabs with spaces |
-| MD012 | Collapse multiple consecutive blank lines into one |
-| MD023 | Ensure headings start at the beginning of the line (no leading spaces) |
-| MD024 | Remove or rename duplicate headings within the same file |
-| MD025 | Ensure only one H1 (`#`) per file |
-| MD030 | Use exactly one space after every list marker |
-| MD031 | Add a blank line before and after every fenced code block |
-| MD032 | Add a blank line before and after every list |
-| MD040 | Add a language identifier to every fenced code block |
-| MD047 | Ensure every file ends with a single trailing newline |
-| MD051 | Fix any anchor links (`[text](#anchor)`) that don't match an existing heading |
-
-## Rules
-
-- Do NOT use line numbers in documentation — reference file paths and symbol names only
+Fix markdown lint issues in place. Files: the ones the user names, else `ARCHITECTURE.md`, `DEVELOPER_GUIDE.md`, `README.md`, `CLAUDE.md` (skip missing).
 
 ## Steps
 
-1. Read each file
-2. Apply all fixes above
-3. Write the corrected file back
-4. Run `repo-verify-docs` if any structural edits were made (e.g. headings renamed)
+1. Autofix with the repo's `.markdownlint*` config if present:
+
+   ```bash
+   npx --yes markdownlint-cli2 --fix <files>
+   ```
+
+2. Fix the remainder by hand (autofix can't rename duplicate headings or repair anchors). If the tool is unavailable, apply the table below by hand.
+3. If any heading was renamed, run `repo-verify-docs`.
+
+## Rules
+
+| Rule | Fix |
+| ---- | --- |
+| MD004 | Consistent list marker (`-`) |
+| MD009 | No trailing spaces |
+| MD010 | Spaces, not tabs |
+| MD012 | One blank line max |
+| MD023 | Headings start at column 0 |
+| MD024 | No duplicate headings in a file |
+| MD025 | One H1 per file |
+| MD030 | One space after list markers |
+| MD031 | Blank line around fenced code blocks |
+| MD032 | Blank line around lists |
+| MD040 | Language on every fenced block |
+| MD047 | Single trailing newline |
+| MD051 | Anchor links match an existing heading |
+
+No line numbers in docs — paths and symbol names only.

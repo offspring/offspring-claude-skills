@@ -1,6 +1,6 @@
 # offspring-claude-skills
 
-Personal Claude Code plugin with skills, commands, and workflows.
+Personal Claude Code plugin with skills, hooks, and an output style.
 
 ## Structure
 
@@ -8,38 +8,23 @@ Personal Claude Code plugin with skills, commands, and workflows.
 | --------- | ------- |
 | `.claude-plugin/` | Plugin manifests (plugin.json, marketplace.json) |
 | `skills/` | Skills (SKILL.md per directory) |
-| `commands/` | Slash commands (.md files) |
 | `output-styles/` | Output styles (.md files) |
-| `scripts/` | Developer utilities (dev-link.sh, bump-version.sh) |
-| `hooks/` | Hook definitions (hooks.json) |
-| `agents/` | Agent definitions — empty, add .md files when needed |
+| `hooks/` | hooks.json plus hook scripts |
+| `agents/` | Agent definitions (.md), currently empty |
+| `scripts/` | check.sh (static checks, run by `/test` and `/release-my-changes`), eval.sh (`claude plugin eval` wrapper), dev-link.sh, bump-version.sh |
 
-## Adding a new skill
+`skills/`, `output-styles/`, `hooks/`, and `agents/` are discovered by convention. plugin.json holds metadata only — do not add `skills`, `commands`, `outputStyles`, `hooks`, or `agents` fields.
 
-1. Create `skills/<skill-name>/SKILL.md` with YAML frontmatter (`name`, `description`)
-2. The `skills` array in `.claude-plugin/plugin.json` points to `./skills/` — new directories are auto-discovered
+## Adding things
 
-## Adding a new command
+- Skill: `skills/<name>/SKILL.md` with `name` and `description` frontmatter. Trigger conditions in the description, not the workflow.
+- Output style: `output-styles/<name>.md` with `name` and `description`.
+- Agent: `agents/<name>.md` with `name`, `description`, `model`.
+- Hook: edit `hooks/hooks.json`.
 
-1. Create `commands/<command-name>.md` with YAML frontmatter
-2. The `commands` array in `.claude-plugin/plugin.json` points to `./commands/` — new files are auto-discovered
-
-## Adding an output style
-
-1. Create `output-styles/<style-name>.md` with YAML frontmatter (`name`, `description`)
-2. The `outputStyles` field in `.claude-plugin/plugin.json` points to `./output-styles/` — new files are auto-discovered
-
-## Adding an agent
-
-1. Create `agents/<agent-name>.md` with YAML frontmatter (`name`, `description`, `model`)
-2. Agents are auto-discovered by convention — do NOT add an `agents` field to plugin.json
+Don't duplicate global rules from `~/.claude/CLAUDE.md` and `~/.claude/rules/` (the dotfiles repo) in skills; skills hold only what the workflow itself needs.
 
 ## GitHub access
 
-- This repo is **public** on github.com (remote `offspring` = `offspring/offspring-claude-skills` — there is no `origin`) and must stay public so the plugin can be installed from its marketplace. Use the default `gh` host — no `--hostname` flag needed.
-- **Restrict writes (pushes, PRs, comments) to the `github.com/offspring` org.** Targeting another org is allowed only when working on or contributing to third-party packages.
-
-## Adding hooks
-
-1. Edit `hooks/hooks.json` with hook definitions
-2. Hooks are auto-loaded by convention — do NOT add a `hooks` field to plugin.json
+- Public repo on github.com; remote `offspring` = `offspring/offspring-claude-skills`, no `origin`. Must stay public so the plugin installs from its marketplace.
+- Restrict writes (pushes, PRs, comments) to the `github.com/offspring` org unless contributing to a third-party package.

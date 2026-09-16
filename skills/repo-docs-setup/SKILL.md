@@ -13,7 +13,7 @@ Read and follow the full template in `template.md` (in this skill's directory). 
 ## Quick Reference
 
 | Step | What |
-|------|------|
+| ---- | ---- |
 | 1 | Explore the codebase |
 | 2 | Consolidate existing docs into 4 target files |
 | 3 | Create / update CLAUDE.md |
@@ -22,7 +22,3 @@ Read and follow the full template in `template.md` (in this skill's directory). 
 | 6 | Clean up old docs (ask user before deleting), then run `repo-verify-docs` and `repo-lint-docs` |
 | 7 | Verify everything |
 | 8 | Offer to commit (ask first) via `git-commit`, after a `simplify` pass on any new scripts |
-
-## GitHub Access
-
-- Use the repo's default `gh` host — no `--hostname` flag needed

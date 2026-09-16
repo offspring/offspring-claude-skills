@@ -6,85 +6,73 @@ allowed-tools: ["Bash(git *)", "Bash(gh *)", "Read", "Edit", "AskUserQuestion", 
 
 # Address PR Comments
 
-Fetch open PRs, show review comments, and address selected ones.
-
-## Process
-
-### Step 1: Verify auth
-
-**HARD GATE**:
+## Step 1: Auth and account
 
 ```bash
 gh auth status 2>&1
+git remote -v
 ```
 
-If not logged in, **STOP**. Tell the user to run `gh auth login` and retry.
+Not logged in: **STOP**, tell the user to run `gh auth login`. If several accounts are logged in, the active one must match the owner in the remote URL; otherwise `gh auth switch --user <account>` before continuing.
 
-### Step 2: Find open PRs
+## Step 2: Find the PR
 
-Run `gh pr list`. If multiple PRs exist, ask the user which one to work on. If only one, proceed with it.
+`gh pr view --json number,title,url` resolves the current branch's PR. If none, `gh pr list --author @me`; ask which one unless exactly one.
 
-### Step 3: Fetch all PR feedback
+## Step 3: Fetch feedback
 
-Issue these as parallel tool calls (not one sequential script):
+Parallel calls (`gh` fills `{owner}/{repo}`):
 
 ```bash
-gh api repos/{owner}/{repo}/pulls/{number}/comments   # inline review comments
-gh api repos/{owner}/{repo}/pulls/{number}/reviews    # review-level comments
-gh pr view {number} --comments                        # conversation-level comments
-gh pr checks {number}                                 # CI results
-gh pr view {number} --json mergeable,mergeStateStatus,reviews
+gh api repos/{owner}/{repo}/pulls/<number>/comments   # inline review comments
+gh api repos/{owner}/{repo}/pulls/<number>/reviews    # review-level comments
+gh pr view <number> --comments                        # conversation comments
+gh pr checks <number>                                 # CI
+gh pr view <number> --json mergeable,mergeStateStatus,reviews
 ```
 
-If no feedback exists across any source, report "No review feedback found" and stop.
+No feedback anywhere: report "No review feedback found" and stop.
 
-### Step 4: Present PR status and comments
+## Step 4: Present
 
-First a status summary: mergeable/conflicts, who approved or requested changes, failing CI checks (with links), and bot feedback (codecov, linters, security scanners) summarized in its own section so the user can focus on human comments first.
+Status first: mergeable/conflicts, approvals and change requests, failing checks with links. Bot feedback (codecov, linters, scanners) in its own section; when a reviewer endorses bot feedback, present the two together.
 
-**Check for already-addressed comments.** If a comment's `original_commit_id` differs from the PR's latest commit, read the current file at the commented line — a later commit may already address it. Mark these **Already addressed**, not **Skip** — the distinction matters for the reviewer.
+If a comment's `original_commit_id` isn't the PR head, read the current code at that line — a later commit may already address it. Mark those **Already addressed**, not **Skip**.
 
-**Link bot and human comments.** When a reviewer references or endorses bot feedback, present the two together.
+Then a numbered table of human comments:
 
-Then build a numbered table of every human comment:
+| # | Reviewer | File:Line | Comment | Suggested change? | Proposed action |
+|---|----------|-----------|---------|-------------------|-----------------|
 
-| # | Reviewer | File:Line | Comment (summary) | Suggested change? | Proposed action |
-|---|----------|-----------|-------------------|--------------------|-----------------|
+Per entry: a few lines of `diff_hunk`, the full comment, current vs proposed code for suggestion blocks, resolved/outdated status, and one action:
 
-For each entry include a few lines of `diff_hunk` context, the full comment text, current code vs. proposed change for any suggestion block, resolved/outdated status, and a proposed action:
+- **Accept suggestion** — apply as-is
+- **Accept with modification** — same intent, different implementation (say why)
+- **Fix differently** — real issue, wrong fix (show yours)
+- **Reply** — no code change; explain rationale
+- **Already addressed** — note the commit
+- **Discuss** — unsure or disagree; user decides
+- **Skip** — resolved, outdated, or informational
 
-- **Accept suggestion** — apply the reviewer's change as-is
-- **Accept with modification** — agree with the intent, different implementation (explain why)
-- **Fix differently** — real issue, wrong fix (show your alternative)
-- **Reply** — no code change; post a response explaining rationale
-- **Already addressed** — a later commit fixed it (note which)
-- **Discuss** — unsure or disagree; flag for the user to decide
-- **Skip** — resolved, outdated, or purely informational
+## Step 5: Confirm
 
-### Step 5: Ask the user
+Ask the user to confirm or override each action (e.g. "apply all", "1,3,5 apply; 2 skip; 4 fix differently"). **No code changes before confirmation.**
 
-Present the table and ask the user to confirm or override each action (e.g. "apply all", or "1,3,5 apply; 2 skip; 4 fix differently"). **Do NOT make any code changes until the user confirms.** Only apply the actions the user approved.
+## Step 6: Execute
 
-### Step 6: Execute approved actions
-
-- **Accept suggestion / Accept with modification / Fix differently** — edit the local file, stage changes
-- **Reply** — draft the reply, show it to the user, then post a threaded reply:
+- Code actions: edit and stage
+- **Reply**: draft, show the user, then post
 
   ```bash
-  gh api repos/{owner}/{repo}/pulls/{pull_number}/comments/{comment_id}/replies \
-    -f body="<reply text>"
+  gh api repos/{owner}/{repo}/pulls/<number>/comments/<comment_id>/replies -f body="<reply>"
   ```
 
-- **Already addressed** — optionally reply noting which commit addressed the feedback, so the reviewer knows to re-check
+- **Already addressed**: optionally reply naming the commit
 
-After all code changes are applied, use the `simplify` skill to review the changed code for quality.
-
-### Step 7: Commit
-
-Use the `git-commit` skill to stage and commit with a message referencing the PR feedback. Summarize what was done: files changed, replies posted, items skipped.
+Then run `simplify` on the changed code and `git-commit` with a message referencing the feedback. Summarize: files changed, replies posted, items skipped.
 
 ## Notes
 
-- Use `gh` CLI exclusively (not GitHub MCP tools), on the repo's default host — no `--hostname` flag needed
-- Always show the raw comment before proposing a fix so the user can decide
-- Keep replies concise and technical — explain the reasoning, not the process
+- `gh` CLI only (not GitHub MCP tools), default host, no `--hostname`
+- Show the raw comment before proposing a fix
+- Replies: concise and technical — reasoning, not process
