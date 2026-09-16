@@ -1,0 +1,7 @@
+{
+  // Skill prose is written one sentence per line; line length is not a defect.
+  "config": {
+    "MD013": false
+  },
+  "ignores": ["node_modules/**", "evals/results/**"]
+}
