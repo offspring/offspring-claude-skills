@@ -17,7 +17,7 @@ Personal Claude Code plugin with skills, hooks, and an output style.
 
 ## Adding things
 
-- Skill: `skills/<name>/SKILL.md` with `name` and `description` frontmatter. Trigger conditions in the description, not the workflow.
+- Skill: `skills/<name>/SKILL.md` with `name` and `description` frontmatter. Trigger conditions in the description, not the workflow. Only skills you would publish go here; private ones (names, preferences, machine specifics) live in `dotfiles_mac/claude/skills/`.
 - Output style: `output-styles/<name>.md` with `name` and `description`.
 - Agent: `agents/<name>.md` with `name`, `description`, `model`.
 - Hook: edit `hooks/hooks.json`.

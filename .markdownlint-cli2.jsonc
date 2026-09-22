@@ -1,7 +1,9 @@
 {
   // Skill prose is written one sentence per line; line length is not a defect.
+  // Makefile recipes need real tabs; only fenced makefile blocks are exempt from MD010.
   "config": {
-    "MD013": false
+    "MD013": false,
+    "MD010": { "ignore_code_languages": ["makefile"] }
   },
   "ignores": ["node_modules/**", "evals/results/**"]
 }

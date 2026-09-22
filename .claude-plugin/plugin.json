@@ -1,6 +1,6 @@
 {
   "name": "offspring-claude-skills",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Personal skills, hooks, and an output style for Claude Code",
   "author": {
     "name": "Offspring"

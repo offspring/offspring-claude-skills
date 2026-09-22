@@ -64,9 +64,10 @@ check_markdown() {
 
 check_hook() {
     step "Attribution hook"
-    local blocked allowed rc
+    local blocked allowed audit rc
     blocked='{"tool_input":{"command":"git commit -m x -m \"Co-Authored-By: someone <s@example.com>\""}}'
     allowed='{"tool_input":{"command":"git commit -m \"Fix typo\""}}'
+    audit='{"tool_input":{"command":"git log --grep=Co-Authored-By"}}'
 
     set +e
     bash "$HOOK" <<< "$blocked" 2>/dev/null
@@ -79,6 +80,12 @@ check_hook() {
     rc=$?
     set -e
     (( rc == 0 )) || err "${HOOK}: clean command blocked (exit ${rc})"
+
+    set +e
+    bash "$HOOK" <<< "$audit" 2>/dev/null
+    rc=$?
+    set -e
+    (( rc == 0 )) || err "${HOOK}: read-only audit blocked (exit ${rc})"
 }
 
 main() {
