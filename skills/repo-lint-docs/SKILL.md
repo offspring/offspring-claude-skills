@@ -1,7 +1,7 @@
 ---
 name: repo-lint-docs
 description: Use when fixing markdown lint issues in documentation files (ARCHITECTURE.md, DEVELOPER_GUIDE.md, README.md, CLAUDE.md). Edits files in place.
-allowed-tools: ["Bash(npx --yes markdownlint-cli2 *)", "Read", "Edit", "Skill"]
+allowed-tools: ["Bash(npx --no markdownlint-cli2 *)", "Read", "Edit", "Skill"]
 model: sonnet
 effort: low
 ---
@@ -15,10 +15,10 @@ Fix markdown lint issues in place. Files: the ones the user names, else `ARCHITE
 1. Autofix with the repo's `.markdownlint*` config if present:
 
    ```bash
-   npx --yes markdownlint-cli2 --fix <files>
+   npx --no markdownlint-cli2 --fix <files>
    ```
 
-2. Fix the remainder by hand (autofix can't rename duplicate headings or repair anchors). If the tool is unavailable, apply the table below by hand.
+2. Fix the remainder by hand (autofix can't rename duplicate headings or repair anchors). If `npx` reports it missing, tell the user markdownlint-cli2 is not installed (`npm install -g markdownlint-cli2`) and apply the table below by hand.
 3. If any heading was renamed, run `repo-verify-docs`.
 
 ## Rules

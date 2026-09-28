@@ -59,7 +59,11 @@ check_frontmatter() {
 
 check_markdown() {
     step "Markdown lint"
-    npx --yes markdownlint-cli2 "skills/**/*.md" "*.md" ".claude/commands/*.md" || err "markdown lint issues"
+    if ! npx --no -- markdownlint-cli2 --version >/dev/null 2>&1; then
+        err "markdownlint-cli2 not installed (npm install -g markdownlint-cli2)"
+        return
+    fi
+    npx --no markdownlint-cli2 "skills/**/*.md" "*.md" ".claude/commands/*.md" || err "markdown lint issues"
 }
 
 check_hook() {
