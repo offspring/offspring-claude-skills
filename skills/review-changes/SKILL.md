@@ -1,7 +1,7 @@
 ---
 name: review-changes
 description: Use when the user wants code changes reviewed — the current branch's changes against its base, or a GitHub PR (pass the PR number or URL)
-allowed-tools: ["Bash(git *)", "Bash(gh *)", "Read", "Skill"]
+allowed-tools: ["Bash(git *)", "Bash(gh *)", "Read", "Skill", "Agent"]
 effort: xhigh
 ---
 
@@ -56,13 +56,25 @@ Read the root CLAUDE.md and any in touched directories; flag clear violations on
 | Style | Naming, dead code, inconsistency with existing patterns |
 | Conventions | CLAUDE.md violations |
 
-History: `git blame` the modified code — does the change contradict why it was written that way, or a comment in the file? If blame shows it landed via a reviewed PR (`gh api "repos/{owner}/{repo}/commits/<sha>/pulls"`, `gh pr view <number> --comments`), does that feedback apply again?
+History: `git blame` the modified code — does the change contradict why it was written that way, or a comment in the file (invariants, "must", "do not", ordering notes)? If blame shows it landed via a reviewed PR (`gh api "repos/{owner}/{repo}/commits/<sha>/pulls"`, `gh pr view <number> --comments`), does that feedback apply again?
 
 Breaking changes: for each changed signature, export, script, build target, config key, env var, CLI flag, or output format, `git grep` its consumers and confirm each still works. Schema changes need a migration.
 
 Docs: if the diff touches paths, symbols, endpoints, config keys, or build targets, invoke `repo-verify-docs` and report its findings. If ARCHITECTURE.md, DEVELOPER_GUIDE.md, README.md, or CLAUDE.md changed, check them against `repo-lint-docs` rules and report violations. Never edit during a review.
 
-## Step 3: Report
+## Step 3: Verify
+
+Send every Critical and Important finding to its own `Agent`, at most 20 per message (Claude Code's concurrent subagent limit) so they run in parallel. Give each the base ref and `git diff "$base...HEAD"` (or the PR number), the change's intent from Step 1, the finding with its file:line, and the CLAUDE.md paths read in Step 2, and have it score its confidence 0-100 that the finding is real, using this rubric verbatim:
+
+- 0: false positive that fails light scrutiny, or pre-existing
+- 25: might be real, could not verify; or stylistic and not called out in CLAUDE.md
+- 50: verified real, but a nitpick or rare in practice
+- 75: double-checked, very likely hit in practice, or directly called out in CLAUDE.md
+- 100: certain; the evidence confirms it and it will happen often
+
+For a CLAUDE.md finding, the agent must confirm the file calls out that issue specifically. Drop findings below 75, except Critical findings scoring 50 or more: keep those, marked "(low confidence)". Suggestions, Documentation, and Out of scope entries skip this step.
+
+## Step 4: Report
 
 ```text
 ## Critical (must fix before merge)
@@ -86,7 +98,7 @@ If the change is good, say so. Don't manufacture issues.
 ## Rules
 
 - Reference file:line and quote the code
-- Verify every finding is real and matters; drop what you can't confirm
+- Verify every finding is real and matters; Step 3 decides which Critical and Important findings stay, drop any other you can't confirm
 - Flag anything this change introduces or triggers, wherever it manifests
 - Keep out of main findings: pre-existing issues, formatter-level nits, anything the repo's CI linter/typechecker would catch, lint-silenced issues. Serious pre-existing issues (security, data loss, broken auth) go under "Out of scope", one line each; omit the section if empty
 - A possibly intentional behavior change is a question, not a finding
